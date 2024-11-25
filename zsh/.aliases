@@ -1,0 +1,43 @@
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+# Enhanced listing commands
+alias ls='ls -G'
+alias ll='ls -lh'
+alias la='ls -lha'
+alias ld='ls -ld */'
+
+# Development shortcuts
+alias py='python3'
+alias pip='pip3'
+alias act='source venv/bin/activate'
+alias venv='python3 -m venv venv'
+alias npmls='npm list --depth=0'
+alias npmi='npm install'
+alias npmu='npm update'
+alias dk='docker'
+alias dkc='docker-compose'
+alias dkps='docker ps'
+alias dkst='docker stats'
+
+# System shortcuts
+alias flush-dns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
+alias ip='curl -s ipinfo.io | jq .'
+alias ports='lsof -i -P -n | grep LISTEN'
+alias sysprof='top -o cpu -stats pid,command,cpu,mem,time,state'
+
+
+# Personal
+alias rbt="robot -d out_files/"
+alias gfl="git flow"
+alias lz="lazygit"
+alias fzn='nvim $(fzf)'
+alias firefox='open -a /Applications/Firefox.app'
+alias rm="rm -i"
+alias nv='nvim -i ~/.local/share/nvim/shada/$$'
+alias awsdo='aws --endpoint-url=https://ams3.digitaloceanspaces.com --no-verify-ssl'
+alias nt='open -na "iTerm"'
+

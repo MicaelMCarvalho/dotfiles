@@ -30,16 +30,6 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-# Aliases
-alias rbt="robot -d out_files/"
-alias gfl="git flow"
-alias lz="lazygit"
-alias fzn='nvim $(fzf)'
-alias firefox='open -a /Applications/Firefox.app'
-alias rm="rm -i"
-alias nv='nvim -i ~/.local/share/nvim/shada/$$'
-alias awsdo='aws --endpoint-url=https://ams3.digitaloceanspaces.com --no-verify-ssl'
-alias nt='open -na "iTerm"'
 
 # thefuck configuration
 eval $(thefuck --alias)
@@ -98,3 +88,5 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 # Language configuration
 export LC_ALL=en_US.UTF-8
+
+source .aliases
