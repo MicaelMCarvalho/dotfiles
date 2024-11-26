@@ -1,7 +1,9 @@
 [user]
-	email = mc@mintt.care
-	name = Micael Carvalho
-	signingKey = ""
+  email = micael.l.m.c@gmail.com
+  name = Micael Carvalho
+	signingkey = ""
+[includeIf "gitdir:~/mintT/"]
+    path = .gitconfig-work
 [gpg]
 	format = openpgp
 	program = gpg
