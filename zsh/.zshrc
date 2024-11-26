@@ -63,6 +63,7 @@ fdr() {
   cd "$DIR"
 }
 
+source "${HOME}/.aliases"
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 export FZF_CTRL_T_COMMAND='ag --hidden --ignore .git -g ""'
 
@@ -89,4 +90,3 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # Language configuration
 export LC_ALL=en_US.UTF-8
 
-source .aliases
