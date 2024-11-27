@@ -41,3 +41,8 @@ alias nv='nvim -i ~/.local/share/nvim/shada/$$'
 alias awsdo='aws --endpoint-url=https://ams3.digitaloceanspaces.com --no-verify-ssl'
 alias nt='open -na "iTerm"'
 
+
+#Flutter 
+alias fpg="flutter pub get"
+alias frb="flutter pub run build_runner  build --delete-conflicting-outputs"
+
