@@ -127,6 +127,66 @@ wezterm.on("window-close-requested", function(window, pane)
   return false
 end)
 
+local wezterm = require("wezterm")
+local act = wezterm.action
+
+-- Create a mapping of action IDs to their actual actions
+local action_map = {
+  ["split-vertical"] = act.SplitVertical { domain = "CurrentPaneDomain" },
+  ["split-horizontal"] = act.SplitHorizontal { domain = "CurrentPaneDomain" },
+  ["move-left"] = act.ActivatePaneDirection("Left"),
+  ["move-down"] = act.ActivatePaneDirection("Down"),
+  ["move-up"] = act.ActivatePaneDirection("Up"),
+  ["move-right"] = act.ActivatePaneDirection("Right"),
+  ["close-pane"] = act.CloseCurrentPane { confirm = true },
+  ["toggle-zoom"] = act.TogglePaneZoomState,
+  ["resize-mode"] = act.ActivateKeyTable { name = "resize_pane", one_shot = false },
+  ["new-tab"] = act.SpawnTab("CurrentPaneDomain"),
+  ["prev-tab"] = act.ActivateTabRelative(-1),
+  ["next-tab"] = act.ActivateTabRelative(1),
+  ["show-tab-nav"] = act.ShowTabNavigator,
+  ["move-tab-mode"] = act.ActivateKeyTable { name = "move_tab", one_shot = false },
+  ["workspace-switcher"] = act.ShowLauncherArgs { flags = "FUZZY|WORKSPACES" },
+  ["toggle-opacity"] = wezterm.action.EmitEvent("toggle-opacity"),
+}
+
+-- Function to generate keymap descriptions with action IDs
+local function get_keymap_descriptions()
+  return {
+    { label = "Split pane vertically (LEADER + s)", id = "split-vertical" },
+    { label = "Split pane horizontally (LEADER + v)", id = "split-horizontal" },
+    { label = "Navigate to left pane (LEADER + h)", id = "move-left" },
+    { label = "Navigate to pane below (LEADER + j)", id = "move-down" },
+    { label = "Navigate to pane above (LEADER + k)", id = "move-up" },
+    { label = "Navigate to right pane (LEADER + l)", id = "move-right" },
+    { label = "Close current pane (LEADER + q)", id = "close-pane" },
+    { label = "Toggle pane zoom (LEADER + z)", id = "toggle-zoom" },
+    { label = "Enter resize mode (LEADER + r)", id = "resize-mode" },
+    { label = "Create new tab (LEADER + t)", id = "new-tab" },
+    { label = "Previous tab (LEADER + [)", id = "prev-tab" },
+    { label = "Next tab (LEADER + ])", id = "next-tab" },
+    { label = "Show tab navigator (LEADER + n)", id = "show-tab-nav" },
+    { label = "Enter move tab mode (LEADER + m)", id = "move-tab-mode" },
+    { label = "Show workspace switcher (LEADER + w)", id = "workspace-switcher" },
+    { label = "Toggle opacity (LEADER + b)", id = "toggle-opacity" },
+  }
+end
+
+-- Add this to your key bindings
+table.insert(config.keys, {
+  key = "?",
+  mods = "LEADER",
+  action = act.InputSelector {
+    title = "Keybindings",
+    choices = get_keymap_descriptions(),
+    fuzzy = true,
+    action = wezterm.action_callback(function(window, pane, id, label)
+      if action_map[id] then
+        window:perform_action(action_map[id], pane)
+      end
+    end),
+  },
+})
 
 config.send_composed_key_when_left_alt_is_pressed = true
 config.send_composed_key_when_right_alt_is_pressed = true

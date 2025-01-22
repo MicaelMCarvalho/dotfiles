@@ -22,6 +22,7 @@ plugins=(
   dotenv
   web-search
   zsh-autosuggestions
+  zsh-syntax-highlighting
   git-flow-completion
   s3cmd
   virtualenv
