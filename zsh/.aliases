@@ -1,19 +1,24 @@
+# Shell Navigation
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ~='cd ~'
+# Use a more standard name if '--' causes issues, but it often works in zsh/bash
 alias -- -='cd -'
+# Alternative: alias cdb='cd -'
 
-# Enhanced listing commands
+# Enhanced listing commands (macOS specific -G for color)
 alias ls='ls -G'
-alias ll='ls -lh'
-alias la='ls -lha'
-alias ld='ls -ld */'
+alias ll='ls -lhG' # Added G for color here too
+alias la='ls -lhaG' # Added G for color here too
+alias l='ls -lG' # Common short alias for list
+alias ld='ls -ldG */' # List only directories
 
 # Development shortcuts
 alias py='python3'
 alias pip='pip3'
+alias python='python3' # Explicitly alias python too
 alias act='source venv/bin/activate'
 alias venv='python3 -m venv venv'
 alias npmls='npm list --depth=0'
@@ -24,26 +29,25 @@ alias dkc='docker-compose'
 alias dkps='docker ps'
 alias dkst='docker stats'
 
-# System shortcuts
-alias flush-dns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
-alias ip='curl -s ipinfo.io | jq .'
+# System shortcuts (macOS specific)
+alias flush-dns='sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder && echo "DNS cache flushed."' # Added && and confirmation
+alias ip='curl -s ipinfo.io | jq .' # Requires jq: brew install jq
 alias ports='lsof -i -P -n | grep LISTEN'
 alias sysprof='top -o cpu -stats pid,command,cpu,mem,time,state'
 
-
-# Personal
-alias rbt="robot -d out_files/"
-alias gfl="git flow"
-alias lz="lazygit"
-alias fzn='nvim $(fzf)'
+# Personal Apps & Tools
+alias rbt="robot -d out_files/" # Assumes Robot Framework
+alias gfl="git flow" # Assumes git-flow extension
+alias lz="lazygit" # Assumes lazygit: brew install lazygit
+alias fzn='nvim $(fzf)' # Assumes fzf and nvim: brew install fzf nvim
 alias firefox='open -a /Applications/Firefox.app'
-alias rm="rm -i"
-alias nv='nvim -i ~/.local/share/nvim/shada/$$'
-alias awsdo='aws --endpoint-url=https://ams3.digitaloceanspaces.com --no-verify-ssl'
-alias nt='open -na "iTerm"'
+alias rm="rm -i" # Safety alias
+alias nv='nvim -i ~/.local/share/nvim/shada/$$' # nvim with isolated shada
+alias awsdo='aws --endpoint-url=https://ams3.digitaloceanspaces.com --no-verify-ssl' # DigitalOcean Spaces specific
+alias nt='open -na "iTerm"' # Open new iTerm window
+alias wez='/Applications/WezTerm.app/Contents/MacOS/wezterm start' # Open WezTerm
 
-
-#Flutter 
+# Flutter
 alias fpg="flutter pub get"
-alias frb="flutter pub run build_runner  build --delete-conflicting-outputs"
+alias frb="flutter pub run build_runner build --delete-conflicting-outputs"
 
