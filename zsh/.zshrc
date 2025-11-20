@@ -356,3 +356,4 @@ fi
 # Load Powerlevel10k configuration
 # IMPORTANT: This should be the last thing sourced in ~/.zshrc
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
