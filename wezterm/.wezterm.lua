@@ -51,6 +51,8 @@ config.leader = {
 }
 
 
+config.default_cwd = wezterm.home_dir
+
 -- ============================================================
 -- HELPER FUNCTIONS
 -- ============================================================
@@ -60,28 +62,29 @@ local function spawn_tab_after_current(window, pane)
   local mux_window = window:mux_window()
   local current_tab = mux_window:active_tab()
 
+  -- Get the current tab index (zero-based)
   local current_index = 0
 
-  -- Find current tab index
   for i, tab in ipairs(mux_window:tabs()) do
     if tab:tab_id() == current_tab:tab_id() then
-      current_index = i
+      current_index = i - 1
       break
     end
   end
 
-  -- Spawn new tab
+  -- Create a new tab, inheriting the current directory
   window:perform_action(
     act.SpawnTab("CurrentPaneDomain"),
     pane
   )
 
-  -- Move new tab immediately after previous active tab
-  local new_tab = mux_window:active_tab()
-
-  if new_tab then
-    new_tab:move_to(current_index)
-  end
+  -- Move the new active tab to the desired position
+  wezterm.time.call_after(0.2, function()
+    window:perform_action(
+      act.MoveTab(current_index + 1),
+      mux_window:active_tab():active_pane()
+    )
+  end)
 end
 
 local new_tab_action = wezterm.action_callback(spawn_tab_after_current)
