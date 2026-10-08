@@ -357,3 +357,22 @@ fi
 # IMPORTANT: This should be the last thing sourced in ~/.zshrc
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+
+
+
+
+# --- development helpers functions ---
+voluntinder-mock() {
+  DARE_CLIENT_SECRET="$(
+    security find-generic-password \
+      -a "$USER" \
+      -s "dare-voluntinder-local-secret" \
+      -w
+  )" ~/git/vost/DARE_DASHBOARD/scripts/voluntinder-local start
+}
+
+# opencode
+export PATH=/Users/micael/.opencode/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+export EDITOR=nvim

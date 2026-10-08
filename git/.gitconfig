@@ -2,8 +2,8 @@
   email = micael.l.m.c@gmail.com
   name = Micael Carvalho
 	signingkey = ""
-[includeIf "gitdir:~/mintT/"]
-    path = .gitconfig-work
+[includeIf "gitdir:~/cleanslate/"]
+    path = .gitconfig-workCS
 [gpg]
 	format = openpgp
 	program = gpg
