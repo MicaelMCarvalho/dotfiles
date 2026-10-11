@@ -49,7 +49,7 @@ _fzcmd_descriptions=(
   "firefox" "Open Firefox application"
   "rm"      "Remove files interactively (safer rm -i)"
   "nv"      "Run nvim with isolated shada file"
-  "awsdo"   "Run AWS CLI targeting DigitalOcean Spaces (AMS3, no SSL verify)"
+  "awsdo"   "Run AWS CLI targeting DigitalOcean Spaces (AMS3)"
   "nt"      "Open new iTerm window"
   "wez"     "Start WezTerm terminal application"
 

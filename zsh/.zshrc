@@ -1,378 +1,290 @@
-# ~/.zshrc
-
-# Powerlevel10k instant prompt
-# To speed up shell startup, this sources the Powerlevel10k instant prompt cache.
-# IMPORTANT: This should be the first lines in ~/.zshrc.
+# Powerlevel10k instant prompt must stay near the top of this file.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Oh My Zsh Configuration
+# Keep PATH ordered and free of duplicate entries.
+typeset -U path PATH
+dotfiles_bin_dirs=(
+  "$HOME/.local/bin"
+  "$HOME/.opencode/bin"
+  "$HOME/.pub-cache/bin"
+  "$HOME/.gem/bin"
+  "$HOME/.dotnet/tools"
+  "$HOME/development/flutter/bin"
+  "${GOPATH:-$HOME/go}/bin"
+  /opt/homebrew/bin
+  /opt/homebrew/sbin
+  /usr/local/bin
+  /usr/local/share/dotnet
+)
+for dotfiles_bin_dir in ${(Oa)dotfiles_bin_dirs}
+do
+  [[ -d "$dotfiles_bin_dir" ]] && path=("$dotfiles_bin_dir" $path)
+done
+unset dotfiles_bin_dir dotfiles_bin_dirs
+
+if [[ -d /opt/homebrew ]]; then
+  export HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-/opt/homebrew}"
+elif [[ -d /usr/local/Homebrew ]]; then
+  export HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-/usr/local}"
+fi
+
+export EDITOR=nvim
+export VISUAL="$EDITOR"
+export PAGER=less
+export LESS='-FRX'
+export LANG=en_US.UTF-8
+
+# History shared across interactive shells.
+HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=10000
+setopt APPEND_HISTORY
+setopt EXTENDED_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
+setopt SHARE_HISTORY
+
+# Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="powerlevel10k/powerlevel10k"
-
-# Update behavior
+ZSH_CUSTOM="${ZSH_CUSTOM:-$ZSH/custom}"
+if [[ -r "$ZSH_CUSTOM/themes/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+  ZSH_THEME='powerlevel10k/powerlevel10k'
+else
+  ZSH_THEME=''
+fi
 zstyle ':omz:update' mode reminder
+DISABLE_CORRECTION=true
 
-# Disable command auto-correction (personal preference)
-ENABLE_CORRECTION="false"
-
-# Plugins - Ensure zsh-autosuggestions and zsh-syntax-highlighting are last or near last
-plugins=(
+dotfiles_desired_plugins=(
   git
   docker
   docker-compose
   macos
   dotenv
   web-search
-  git-flow-completion # Ensure git-flow is installed
-  s3cmd # Ensure s3cmd is installed
+  git-flow-completion
+  s3cmd
   virtualenv
   flutter
-  # Add fzf plugin if desired (provides some extra completions, but core bindings come from install script)
-  # fzf
-  zsh-autosuggestions # Must be loaded after other plugins potentially providing widgets
-  zsh-syntax-highlighting # Must be loaded last
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
 
-# Load Oh My Zsh
-source $ZSH/oh-my-zsh.sh
-# Note: User configuration (like PATH, aliases, functions) should generally come AFTER sourcing oh-my-zsh.sh
+plugins=()
+for dotfiles_plugin in $dotfiles_desired_plugins; do
+  if [[ -d "$ZSH/plugins/$dotfiles_plugin" ||
+        -d "$ZSH_CUSTOM/plugins/$dotfiles_plugin" ]]; then
+    plugins+=("$dotfiles_plugin")
+  fi
+done
+unset dotfiles_desired_plugins dotfiles_plugin
 
-# -----------------------------------------------------------------------------
-# Aliases, Functions, and Custom Configuration
-# -----------------------------------------------------------------------------
-
-# Load personal aliases (Ensure this file exists)
-if [[ -f "${HOME}/.aliases" ]]; then
-  source "${HOME}/.aliases"
-else
-  echo "Warning: Alias file ~/.aliases not found." >&2
+if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
+  source "$ZSH/oh-my-zsh.sh"
 fi
 
-# --- Load FZF Command Descriptions ---
-if [[ -f "${HOME}/.fzcmd_descriptions.zsh" ]]; then
-  source "${HOME}/.fzcmd_descriptions.zsh"
-else
-   # Optional: Define an empty array if file missing, so fzcmd doesn't error
-   typeset -gA _fzcmd_descriptions
-   echo "Warning: FZF description file ~/.fzcmd_descriptions.zsh not found." >&2
+if (( ${plugins[(Ie)zsh-autosuggestions]} == 0 )) &&
+   [[ -r "${HOMEBREW_PREFIX:-}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
-# --- FZF (Fuzzy Finder) Configuration & Functions ---
-# Dependencies: brew install fzf fd ripgrep bat tree
-# IMPORTANT: Run fzf install script: $(brew --prefix)/opt/fzf/install
-#            (Enables CTRL-T, CTRL-R, ALT-C keybindings and fuzzy completion)
+[[ -r "$HOME/.aliases" ]] && source "$HOME/.aliases"
 
-# Use fd (faster find) for default file searching (CTRL-T)
-# Respects .gitignore, includes hidden files, follows symlinks
+typeset -gA _fzcmd_descriptions
+[[ -r "$HOME/.fzcmd_descriptions.zsh" ]] &&
+  source "$HOME/.fzcmd_descriptions.zsh"
+
+# fzf defaults
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-# Use fd for directory searching (ALT-C)
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='--height=50% --layout=reverse --border --preview "if [[ -f {} ]]; then (bat --style=numbers --color=always -- {} 2>/dev/null || cat -- {}); elif [[ -d {} ]]; then tree -C -- {} 2>/dev/null | head -200; fi"'
 
-# Add a preview window (requires bat and tree for optimal display)
-export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --preview "([[ -f {} ]] && (bat --style=numbers --color=always {} || cat {})) || ([[ -d {} ]] && (tree -C {} | head -200)) || echo {} 2> /dev/null | head -200"'
+[[ -r "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
 
-# Find file with fd and open in Neovim (like Telescope find_files)
-# Usage: fzne [initial_query]
+_dotfiles_require() {
+  local command_name
+  for command_name in "$@"; do
+    if (( ! $+commands[$command_name] )); then
+      print -u2 -- "Missing command: $command_name"
+      return 127
+    fi
+  done
+}
+
 fzne() {
+  _dotfiles_require fd fzf nvim || return
   local file
-  file=$(fd --type f --hidden --follow --exclude .git . | fzf --query "$1" --select-1 --exit-0 --preview "bat --style=numbers --color=always {} || cat {}")
-  if [[ -n "$file" ]]; then
-    nvim "$file"
-  fi
+  file="$(fd --type f --hidden --follow --exclude .git . |
+    fzf --query "${1:-}" --select-1 --exit-0 --preview 'bat --style=numbers --color=always -- {} 2>/dev/null || cat -- {}')" || return
+  [[ -n "$file" ]] && command nvim -- "$file"
 }
 
-# Find file with fd (including gitignored) and open in Neovim
-# Usage: fznea [initial_query]
 fznea() {
-    local file
-    file=$(fd --type f --hidden --follow --no-ignore . | fzf --query "$1" --select-1 --exit-0 --preview "bat --style=numbers --color=always {} || cat {}")
-    if [[ -n "$file" ]]; then
-        nvim "$file"
-    fi
-}
-
-# Find directory with fd and cd into it (like ALT-C but as a command)
-# Usage: fzcd [initial_query]
-fzcd() {
-  local dir
-  dir=$(fd --type d --hidden --follow --exclude .git . | fzf --query "$1" --select-1 --exit-0 --preview 'tree -C {} | head -200')
-  if [[ -n "$dir" ]]; then
-    cd "$dir" || return 1 # cd and handle potential errors
-  fi
-}
-
-# Find a file using fd/fzf and cd into its containing directory
-# Usage: ffcd [initial_query]
-ffcd() {
-  local selected_file_path
-  # Use fd to find files, pipe to fzf for selection
-  # Preview the file content during selection
-  selected_file_path=$(fd --type f --hidden --follow --exclude .git . | fzf --query "$1" --select-1 --exit-0 --preview "bat --style=numbers --color=always {} || cat {}")
-
-  # Check if the user actually selected a file (fzf exited successfully)
-  if [[ -n "$selected_file_path" ]]; then
-    # Get the directory name from the selected file path
-    local target_directory
-    target_directory=$(dirname "$selected_file_path")
-
-    # Check if dirname successfully extracted a directory path
-    if [[ -n "$target_directory" ]]; then
-      echo "Changing to directory: $target_directory" # Optional: Confirmation message
-      # Change to the target directory
-      cd "$target_directory" || return 1 # Use || return 1 to handle potential cd errors
-    else
-        echo "Error: Could not determine directory for '$selected_file_path'." >&2
-        return 1
-    fi
-  fi
-  # If nothing selected or dirname failed, do nothing further (implicitly returns 0 or the error code from cd/dirname)
-}
-
-# Find file by content using ripgrep (rg) and open in Neovim (like Telescope live_grep)
-# Usage: fzrg <pattern>
-fzrg() {
-  if [[ -z "$1" ]]; then
-    echo "Usage: fzrg <pattern>"
-    return 1
-  fi
-  local result
-  # Search with rg, pipe to fzf with live reload and preview
-  result=$(rg --color=always --line-number --no-heading --smart-case "$1" | fzf \
-    --ansi \
-    --delimiter ':' \
-    --preview "bat --style=numbers --color=always --highlight-line {2} {1}" \
-    --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
-    --bind 'change:reload:rg --color=always --line-number --no-heading --smart-case {q} || true' \
-    --query "$1")
-
-  if [[ -n "$result" ]]; then
-    local file=$(echo "$result" | cut -d: -f1)
-    local line=$(echo "$result" | cut -d: -f2)
-    nvim "+$line" "$file"
-  fi
-}
-
-# Find Git files and open in Neovim (like Telescope git_files)
-# Usage: fzgit [initial_query]
-fzgit() {
-    local file
-    # Use git ls-files to list tracked files
-    file=$(git ls-files | fzf --query "$1" --select-1 --exit-0 --preview "bat --style=numbers --color=always {} || cat {}")
-    if [[ -n "$file" ]]; then
-        nvim "$file"
-    fi
-}
-
-# Find config files under ~/.config and edit with Neovim
-# Usage: fzconf
-fzconf() {
+  _dotfiles_require fd fzf nvim || return
   local file
-  # Search specifically in ~/.config using fd
-  file=$(fd --type f . "$HOME/.config" | fzf --preview "bat --style=numbers --color=always {} || cat {}")
-  if [[ -n $file ]]; then
-    nvim "$file"
-  fi
+  file="$(fd --type f --hidden --follow --no-ignore . |
+    fzf --query "${1:-}" --select-1 --exit-0 --preview 'bat --style=numbers --color=always -- {} 2>/dev/null || cat -- {}')" || return
+  [[ -n "$file" ]] && command nvim -- "$file"
 }
 
-# Find Zsh history and execute command (like CTRL-R but puts command on prompt)
-# Usage: fzh [initial_query]
+fzcd() {
+  _dotfiles_require fd fzf || return
+  local directory
+  directory="$(fd --type d --hidden --follow --exclude .git . |
+    fzf --query "${1:-}" --select-1 --exit-0 --preview 'tree -C -- {} 2>/dev/null | head -200')" || return
+  [[ -n "$directory" ]] && builtin cd -- "$directory"
+}
+
+ffcd() {
+  _dotfiles_require fd fzf || return
+  local file
+  file="$(fd --type f --hidden --follow --exclude .git . |
+    fzf --query "${1:-}" --select-1 --exit-0 --preview 'bat --style=numbers --color=always -- {} 2>/dev/null || cat -- {}')" || return
+  [[ -n "$file" ]] && builtin cd -- "${file:h}"
+}
+
+fzrg() {
+  _dotfiles_require rg fzf nvim || return
+  local query="${1:-}" result file rest line
+  [[ -n "$query" ]] || { print -u2 'Usage: fzrg <pattern>'; return 2; }
+
+  result="$(rg --color=never --line-number --no-heading --smart-case -- "$query" |
+    fzf --delimiter=: --preview 'bat --style=numbers --color=always --highlight-line {2} -- {1}' --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' --bind 'change:reload:rg --color=never --line-number --no-heading --smart-case -- {q} || true' --query "$query")" || return
+
+  file="${result%%:*}"
+  rest="${result#*:}"
+  line="${rest%%:*}"
+  [[ -n "$file" && -n "$line" ]] && command nvim "+$line" -- "$file"
+}
+
+fzgit() {
+  _dotfiles_require git fzf nvim || return
+  git rev-parse --is-inside-work-tree &>/dev/null || {
+    print -u2 'Not inside a Git repository.'
+    return 1
+  }
+
+  local file
+  file="$(git ls-files |
+    fzf --query "${1:-}" --select-1 --exit-0 --preview 'bat --style=numbers --color=always -- {} 2>/dev/null || cat -- {}')" || return
+  [[ -n "$file" ]] && command nvim -- "$file"
+}
+
+fzconf() {
+  _dotfiles_require fd fzf nvim || return
+  [[ -d "$HOME/.config" ]] || { print -u2 '~/.config does not exist.'; return 1; }
+
+  local file
+  file="$(fd --type f . "$HOME/.config" |
+    fzf --preview 'bat --style=numbers --color=always -- {} 2>/dev/null || cat -- {}')" || return
+  [[ -n "$file" ]] && command nvim -- "$file"
+}
+
 fzh() {
-  local cmd
-  # fc -lrn 1: list history reverse numerically without line numbers starting from 1
-  # awk '!x[$0]++': remove duplicates keeping the most recent
-  cmd=$(fc -lrn 1 | awk '!x[$0]++' | fzf --query "$1")
-  if [[ -n "$cmd" ]]; then
-    # print -z: push command onto the editing buffer stack (zle)
-    print -z -- "$cmd"
-  fi
+  _dotfiles_require fzf || return
+  local selected_command
+  selected_command="$(fc -rl 1 | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//' |
+    awk '!seen[$0]++' | fzf --query "${1:-}")" || return
+  [[ -n "$selected_command" ]] && print -z -- "$selected_command"
 }
 
-# Fuzzy find available commands (aliases, functions, builtins, executables) with descriptions
-# Usage: fzcmd [initial_query]
 fzcmd() {
-  # Declare variables locally
-  local selected_line cmd
+  _dotfiles_require fzf || return
+  local selected_line command_name definition description command_type command_path
 
-  # Generate the list and pipe it directly to fzf
-  # No 'line=$(...)' command substitution here
-  selected_line=$( # Capture the output of fzf using command substitution
+  selected_line="$(
     {
-      # 1. Aliases... (unchanged)
-      for cmd def in ${(kv)aliases}; do
-        desc=${_fzcmd_descriptions[$cmd]:-"-"}
-        printf "alias\t%s\t'%s'\t%s\n" "$cmd" "$def" "$desc"
+      for command_name definition in ${(kv)aliases}; do
+        description="${_fzcmd_descriptions[$command_name]:--}"
+        printf 'alias\t%s\t%s\t%s\n' "$command_name" "$definition" "$description"
       done
-      # 2. Functions... (unchanged)
-      for cmd in ${(ok)functions}; do
-        [[ "$cmd" == _* ]] && continue
-        desc=${_fzcmd_descriptions[$cmd]:-"-"}
-        printf "func\t%s\t-\t%s\n" "$cmd" "$desc"
+      for command_name in ${(ok)functions}; do
+        [[ "$command_name" == _* ]] && continue
+        description="${_fzcmd_descriptions[$command_name]:--}"
+        printf 'function\t%s\t-\t%s\n' "$command_name" "$description"
       done
-      # 3. Builtins... (unchanged)
-      for cmd in ${(k)builtins}; do
-        desc=${_fzcmd_descriptions[$cmd]:-"-"}
-        printf "builtin\t%s\t-\t%s\n" "$cmd" "$desc"
+      for command_name in ${(k)builtins}; do
+        description="${_fzcmd_descriptions[$command_name]:--}"
+        printf 'builtin\t%s\t-\t%s\n' "$command_name" "$description"
       done
-      # 4. Executables... (unchanged)
-      for cmd in ${(k)commands}; do
-          local cmd_type=$(type -w "$cmd" 2>/dev/null | cut -d' ' -f3)
-          if [[ "$cmd_type" == "file" || "$cmd_type" == "hashed" ]]; then
-              local cmd_path=${commands[$cmd]}
-              desc=${_fzcmd_descriptions[$cmd]:-"-"}
-              printf "exec\t%s\t%s\t%s\n" "$cmd" "${cmd_path:--}" "$desc"
-          fi
+      for command_name command_path in ${(kv)commands}; do
+        description="${_fzcmd_descriptions[$command_name]:--}"
+        printf 'executable\t%s\t%s\t%s\n' "$command_name" "$command_path" "$description"
       done
-    } | fzf --query="$1" --delimiter='\t' \
-          --with-nth=2,4 \
-          --preview-window='right,60%,border-left' \
-          --color='header:italic' \
-          --header='[ TAB: Toggle Preview | ENTER: Insert Command | CTRL-C: Abort ]' \
-          --preview '
-            # Preview script unchanged...
-            IFS=$'\''\t'\'' read -r type cmd def_or_path desc <<< "${}";
-            printf "Type:    \033[1m%s\033[0m\n" "$type";
-            printf "Command: \033[1;36m%s\033[0m\n" "$cmd";
-            [[ "$desc" != "-" ]] && printf "Desc:    %s\n" "$desc";
-            echo "------------------------------";
-            if [[ "$type" == "alias" ]]; then
-              def_unquoted=$(echo "$def_or_path" | sed "s/^'\''\(.*\)'\''$/\1/")
-              printf "Definition: %s\n" "$def_unquoted";
-            elif [[ "$type" == "func" ]]; then
-              echo "Definition (Source):";
-              (command -v bat >/dev/null && bat --style=plain --color=always --language=sh <(functions "$cmd")) || type "$cmd" 2>/dev/null || echo "(Could not display source)";
-            elif [[ "$type" == "builtin" ]]; then
-              echo "(Shell Builtin)"; echo ""; echo "Description (whatis):"; whatis "$cmd" 2>/dev/null || echo "(No whatis entry)";
-            elif [[ "$type" == "exec" ]];
-              printf "Path: %s\n" "${def_or_path:-(Not found)}"; echo ""; echo "Description (whatis):"; whatis "$cmd" 2>/dev/null || { [[ "$desc" == "-" ]] && echo "(No custom desc or whatis entry - try: man ${cmd})"; } || true
-            fi
-          ' \
-          --bind 'tab:toggle-preview' \
-          --bind 'enter:accept' \
-          --select-1 \
-          --exit-0
-  ) # End of command substitution capturing fzf output
+    } | fzf --query="${1:-}" --delimiter=$'\t' --with-nth=2,4 --header='ENTER: insert command  ·  TAB: toggle preview' --bind='tab:toggle-preview' --preview='printf "Type: %s\nCommand: %s\nDescription: %s\nSource: %s\n" {1} {2} {4} {3}' --preview-window='right,55%,border-left' --select-1 --exit-0
+  )" || return
 
-  # Check if fzf returned a selection (selected_line is not empty)
-  if [[ -n "$selected_line" ]]; then
-    # Extract the command name (second field) from the selected line
-    # Use awk for reliable field splitting on tab
-    cmd=$(echo "$selected_line" | awk -F'\t' '{print $2}')
+  command_name="${${(s:\t:)selected_line}[2]}"
+  [[ -n "$command_name" ]] && print -z -- "$command_name"
+}
 
-    # Check if command extraction was successful
-    if [[ -n "$cmd" ]]; then
-        # Use print -z to push the command onto the ZLE buffer
-        print -z -- "$cmd"
-        # Optional: Force redraw if input doesn't appear immediately
-        # zle && zle redisplay
-    fi
+# Cache the generated alias so Python does not run for every new shell.
+if (( $+commands[thefuck] )); then
+  dotfiles_thefuck_cache="${XDG_CACHE_HOME:-$HOME/.cache}/thefuck/alias.zsh"
+  if [[ ! -r "$dotfiles_thefuck_cache" ||
+        "$commands[thefuck]" -nt "$dotfiles_thefuck_cache" ]]; then
+    command mkdir -p -- "${dotfiles_thefuck_cache:h}" 2>/dev/null &&
+      command thefuck --alias >| "$dotfiles_thefuck_cache" 2>/dev/null
   fi
-  # If the user pressed Esc or fzf failed, selected_line will be empty,
-  # and nothing will be pushed to the prompt.
-}
-
-# --- End FZF Section ---
-
-
-# thefuck configuration (Auto-corrects previous command mistakes)
-# Ensure thefuck is installed: brew install thefuck
-eval $(thefuck --alias)
-
-# Autojump (Navigate directories faster based on usage)
-# Ensure autojump is installed: brew install autojump
-if [ -f "$HOMEBREW_PREFIX/etc/profile.d/autojump.sh" ]; then
-  . "$HOMEBREW_PREFIX/etc/profile.d/autojump.sh"
-  # Zsh completion for autojump needs compinit initialized
-  # autoload -U compinit && compinit -u # This might be redundant if OMZ already does it
-else
-  echo "Warning: autojump script not found." >&2
-fi
-# Note: Oh My Zsh usually runs compinit, so the autoload line might be unnecessary unless you have issues.
-
-# NVM configuration (Node Version Manager)
-export NVM_DIR="$HOME/.nvm"
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-   \. "$NVM_DIR/nvm.sh" # This loads nvm
-   # Loading bash_completion for nvm can sometimes cause delays or conflicts in zsh.
-   # Only uncomment the next line if you specifically need nvm's bash completion features in zsh and know it works well.
-   # [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-else
-  echo "Warning: NVM script not found in $NVM_DIR" >&2
+  [[ -r "$dotfiles_thefuck_cache" ]] && source "$dotfiles_thefuck_cache"
+  unset dotfiles_thefuck_cache
 fi
 
-# PATH configuration (Order matters: earlier entries take precedence)
-# Consolidate PATH modifications for clarity. Add new paths *before* $PATH.
-
-# Add Go bin directory
-[[ -d "$(go env GOPATH)/bin" ]] && export PATH="$(go env GOPATH)/bin:$PATH"
-
-# Add .NET tools directory
-[[ -d "$HOME/.dotnet/tools" ]] && export PATH="$HOME/.dotnet/tools:$PATH"
-[[ -d "/usr/local/share/dotnet" ]] && export PATH="/usr/local/share/dotnet:$PATH" # Standard dotnet location
-
-# Add Homebrew bin (often handled by brew setup, but doesn't hurt to ensure)
-[[ -d "/usr/local/bin" ]] && export PATH="/usr/local/bin:$PATH"
-[[ -d "/opt/homebrew/bin" ]] && export PATH="/opt/homebrew/bin:$PATH" # For Apple Silicon
-
-# Add Flutter SDK bin directory
-[[ -d "$HOME/development/flutter/bin" ]] && export PATH="$HOME/development/flutter/bin:$PATH"
-
-# Add Ruby gems bin directory
-[[ -d "$HOME/.gem/bin" ]] && export PATH="$HOME/.gem/bin:$PATH"
-
-# Add Flutter/Dart pub cache bin directory
-[[ -d "$HOME/.pub-cache/bin" ]] && export PATH="$HOME/.pub-cache/bin:$PATH"
-
-# Ensure PATH only contains unique entries (optional, requires awk)
-# export PATH=$(echo -n $PATH | awk -v RS=: -v ORS=: '!arr[$0]++{print $0}' | sed 's/:$//')
-
-# iTerm2 integration (Provides features like marks, cwd reporting, etc.)
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-# Language configuration (Set locale for consistent program behavior)
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8 # Often good to set LANG as well
-
-# Dart CLI completion
-if [[ -f /Users/micael/.dart-cli-completion/zsh-config.zsh ]]; then
-  . /Users/micael/.dart-cli-completion/zsh-config.zsh
-else
-  # Optional: echo warning if you expect it to be there
-  # echo "Warning: Dart CLI completion script not found." >&2
-  true # Ensure the script doesn't fail if the file is missing
+if [[ -n "${HOMEBREW_PREFIX:-}" &&
+      -r "$HOMEBREW_PREFIX/etc/profile.d/autojump.sh" ]]; then
+  source "$HOMEBREW_PREFIX/etc/profile.d/autojump.sh"
 fi
 
-# Commented out old Powerlevel9k config - likely superseded by P10k
-# export POWERLEVEL9K_INSTANT_PROMPT=quiet
-# export POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv)
+# Lazy-load NVM the first time a Node-related command is used.
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  _load_nvm() {
+    unfunction nvm node npm npx 2>/dev/null
+    source "$NVM_DIR/nvm.sh"
+  }
+  nvm()  { _load_nvm && nvm "$@"; }
+  node() { _load_nvm && node "$@"; }
+  npm()  { _load_nvm && npm "$@"; }
+  npx()  { _load_nvm && npx "$@"; }
+fi
 
+[[ -r "$HOME/.iterm2_shell_integration.zsh" ]] &&
+  source "$HOME/.iterm2_shell_integration.zsh"
+[[ -r "$HOME/.dart-cli-completion/zsh-config.zsh" ]] &&
+  source "$HOME/.dart-cli-completion/zsh-config.zsh"
 
-# --- End of ~/.zshrc ---
+if [[ -x /usr/libexec/java_home ]]; then
+  dotfiles_java_home="$(/usr/libexec/java_home -v 17 2>/dev/null)" &&
+    export JAVA_HOME="$dotfiles_java_home"
+  unset dotfiles_java_home
+fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-# Load Powerlevel10k configuration
-# IMPORTANT: This should be the last thing sourced in ~/.zshrc
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-
-
-
-
-# --- development helpers functions ---
 voluntinder-mock() {
-  DARE_CLIENT_SECRET="$(
-    security find-generic-password \
-      -a "$USER" \
-      -s "dare-voluntinder-local-secret" \
-      -w
-  )" ~/git/vost/DARE_DASHBOARD/scripts/voluntinder-local start
+  local project_root="${VOST_ROOT:-$HOME/git/vost}"
+  local launcher="$project_root/DARE_DASHBOARD/scripts/voluntinder-local"
+  local secret
+
+  [[ -x "$launcher" ]] || {
+    print -u2 -- "Missing executable: $launcher"
+    return 1
+  }
+  secret="$(security find-generic-password -a "$USER" -s dare-voluntinder-local-secret -w)" || return
+  DARE_CLIENT_SECRET="$secret" "$launcher" start
 }
 
-# opencode
-export PATH=/Users/micael/.opencode/bin:$PATH
-export PATH="$HOME/.local/bin:$PATH"
+[[ -r "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"
 
-export EDITOR=nvim
+# Machine-specific or secret configuration belongs here and stays untracked.
+[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+# Syntax highlighting must be the final plugin sourced.
+if (( ${plugins[(Ie)zsh-syntax-highlighting]} == 0 )) &&
+   [[ -r "${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi

@@ -1,70 +1,92 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+set -Eeuo pipefail
 
-DOTFILES=$PWD
+readonly DOTFILES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly BACKUP_ROOT="${DOTFILES_BACKUP_DIR:-$HOME/.dotfiles-backup}"
+readonly BACKUP_DIR="$BACKUP_ROOT/$(date +%Y%m%d-%H%M%S)"
 
-log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
-log_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
+DRY_RUN=false
+backup_created=false
 
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+info() { printf '\033[0;32m[INFO]\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33m[WARN]\033[0m %s\n' "$*" >&2; }
+die() { printf '\033[0;31m[ERROR]\033[0m %s\n' "$*" >&2; exit 1; }
 
-# Function to create a symlink
-create_symlink() {
-    local src="$1"
-    local dest="$2"
-    
-    # Check if the source file exists
-    if [ ! -f "$src" ]; then
-        log_error "Source file $src does not exist"
-        return 1
-    fi
-    
-    # Remove existing file or symlink
-    if [ -f "$dest" ] || [ -L "$dest" ]; then
-        log_warning "Removing existing file: $dest"
-        rm "$dest"
-    fi
-    
-    # Create the symlink
-    ln -s "$src" "$dest"
-    if [ $? -eq 0 ]; then
-        log_info "Created symlink: $dest -> $src"
-    else
-        log_error "Failed to create symlink for $dest"
-    fi
+usage() {
+  cat <<'EOF'
+Usage: ./install.sh [--dry-run]
+
+Creates symlinks in your home directory. Existing files are moved to a
+timestamped directory under ~/.dotfiles-backup before being replaced.
+EOF
 }
 
-# Main installation
+run() {
+  if "$DRY_RUN"; then
+    printf '[DRY RUN]'
+    printf ' %q' "$@"
+    printf '\n'
+  else
+    "$@"
+  fi
+}
+
+backup_existing() {
+  local destination="$1"
+  local relative_path="${destination#"$HOME"/}"
+  local backup_path="$BACKUP_DIR/$relative_path"
+
+  if ! "$backup_created"; then
+    run mkdir -p -- "$BACKUP_DIR"
+    backup_created=true
+  fi
+
+  run mkdir -p -- "$(dirname -- "$backup_path")"
+  run mv -- "$destination" "$backup_path"
+  warn "Backed up $destination to $backup_path"
+}
+
+link_file() {
+  local source="$1"
+  local destination="$2"
+
+  [[ -f "$source" ]] || die "Missing source file: $source"
+
+  if [[ -L "$destination" && "$(readlink -- "$destination")" == "$source" ]]; then
+    info "Already linked: $destination"
+    return
+  fi
+
+  if [[ -e "$destination" || -L "$destination" ]]; then
+    backup_existing "$destination"
+  fi
+
+  run mkdir -p -- "$(dirname -- "$destination")"
+  run ln -s -- "$source" "$destination"
+  info "Linked $destination -> $source"
+}
+
 main() {
-    log_info "Starting dotfiles installation..."
-    
-    # Create required directories
-    # create_directories
-     
-    # Git configurations
-    create_symlink "$DOTFILES/git/.gitconfig" "$HOME/.gitconfig"
-    create_symlink "$DOTFILES/git/.gitconfig-work" "$HOME/.gitconfig-work"
-    create_symlink "$DOTFILES/git/.gitignore_global" "$HOME/.gitignore_global"
-    
-    # Wezterm configuration
-    create_symlink "$DOTFILES/wezterm/.wezterm.lua" "$HOME/wezterm.lua"
-    
-    # ZSH configurations
-    create_symlink "$DOTFILES/zsh/.zshrc" "$HOME/.zshrc"
-    create_symlink "$DOTFILES/zsh/.aliases" "$HOME/.aliases"
-    
-    log_info "Installation completed!"
+  case "${1:-}" in
+    "") ;;
+    --dry-run) DRY_RUN=true ;;
+    -h|--help) usage; exit 0 ;;
+    *) usage >&2; die "Unknown option: $1" ;;
+  esac
+
+  info "Installing dotfiles from $DOTFILES_DIR"
+
+  link_file "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
+  link_file "$DOTFILES_DIR/git/.gitconfig-work" "$HOME/.gitconfig-work"
+  link_file "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global"
+  link_file "$DOTFILES_DIR/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
+  link_file "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
+  link_file "$DOTFILES_DIR/zsh/.aliases" "$HOME/.aliases"
+  link_file "$DOTFILES_DIR/zsh/.fzcmd_descriptions.zsh" "$HOME/.fzcmd_descriptions.zsh"
+
+  info "Installation complete. Open a new shell to load the changes."
+  "$backup_created" && info "Backups are in $BACKUP_DIR"
 }
 
-# Run the installatio:
-main
+main "$@"

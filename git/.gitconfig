@@ -1,21 +1,32 @@
 [user]
-  email = micael.l.m.c@gmail.com
-  name = Micael Carvalho
-	signingkey = ""
+	email = micael.l.m.c@gmail.com
+	name = Micael Carvalho
+
 [includeIf "gitdir:~/cleanslate/"]
-    path = .gitconfig-workCS
-[gpg]
-	format = openpgp
-	program = gpg
-[commit]
-	gpgSign = false
-[tag]
-	forceSignAnnotated = false
-[gpg "ssh"]
-	program = ssh-keygen
-	allowedSignersFile = ""
+	path = .gitconfig-work
+
 [core]
-	ignorecase = false
 	editor = nvim
+	excludesFile = ~/.gitignore_global
+
 [init]
 	defaultBranch = main
+
+[fetch]
+	prune = true
+
+[pull]
+	ff = only
+
+[push]
+	default = simple
+	autoSetupRemote = true
+
+[rerere]
+	enabled = true
+
+[diff]
+	algorithm = histogram
+
+[merge]
+	conflictStyle = zdiff3

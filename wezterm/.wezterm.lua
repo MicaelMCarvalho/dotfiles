@@ -95,20 +95,16 @@ local new_tab_action = wezterm.action_callback(spawn_tab_after_current)
 -- Leader + B
 -- ============================================================
 
-local opacity_full = true
+wezterm.on("toggle-opacity", function(window, _pane)
+  local overrides = window:get_config_overrides() or {}
 
-wezterm.on("toggle-opacity", function(window, pane)
-  opacity_full = not opacity_full
-
-  if opacity_full then
-    window:set_config_overrides({
-      window_background_opacity = 1.0,
-    })
+  if overrides.window_background_opacity == 0.9 then
+    overrides.window_background_opacity = nil
   else
-    window:set_config_overrides({
-      window_background_opacity = 0.9,
-    })
+    overrides.window_background_opacity = 0.9
   end
+
+  window:set_config_overrides(overrides)
 end)
 
 
