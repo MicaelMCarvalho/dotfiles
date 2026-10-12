@@ -17,4 +17,5 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 cask "font-meslo-lg-nerd-font"
+cask "karabiner-elements"
 cask "wezterm"

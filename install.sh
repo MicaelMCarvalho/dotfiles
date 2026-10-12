@@ -47,11 +47,11 @@ backup_existing() {
   warn "Backed up $destination to $backup_path"
 }
 
-link_file() {
+link_path() {
   local source="$1"
   local destination="$2"
 
-  [[ -f "$source" ]] || die "Missing source file: $source"
+  [[ -e "$source" ]] || die "Missing source path: $source"
 
   if [[ -L "$destination" && "$(readlink -- "$destination")" == "$source" ]]; then
     info "Already linked: $destination"
@@ -77,13 +77,14 @@ main() {
 
   info "Installing dotfiles from $DOTFILES_DIR"
 
-  link_file "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
-  link_file "$DOTFILES_DIR/git/.gitconfig-work" "$HOME/.gitconfig-work"
-  link_file "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global"
-  link_file "$DOTFILES_DIR/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
-  link_file "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
-  link_file "$DOTFILES_DIR/zsh/.aliases" "$HOME/.aliases"
-  link_file "$DOTFILES_DIR/zsh/.fzcmd_descriptions.zsh" "$HOME/.fzcmd_descriptions.zsh"
+  link_path "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
+  link_path "$DOTFILES_DIR/git/.gitconfig-work" "$HOME/.gitconfig-work"
+  link_path "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global"
+  link_path "$DOTFILES_DIR/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
+  link_path "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
+  link_path "$DOTFILES_DIR/zsh/.aliases" "$HOME/.aliases"
+  link_path "$DOTFILES_DIR/zsh/.fzcmd_descriptions.zsh" "$HOME/.fzcmd_descriptions.zsh"
+  link_path "$DOTFILES_DIR/karabiner" "$HOME/.config/karabiner"
 
   info "Installation complete. Open a new shell to load the changes."
   "$backup_created" && info "Backups are in $BACKUP_DIR"

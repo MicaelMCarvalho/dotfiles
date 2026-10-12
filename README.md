@@ -1,7 +1,7 @@
 # macOS dotfiles
 
-Personal configuration for Zsh, Git, and WezTerm, plus scripts for restoring
-monitor layouts.
+Personal configuration for Zsh, Git, WezTerm, and Karabiner-Elements, plus
+scripts for restoring monitor layouts.
 
 ## What is included
 
@@ -11,6 +11,8 @@ monitor layouts.
   rerere, and a separate identity for repositories under `~/cleanslate/`.
 - A WezTerm configuration with pane, tab, workspace, resize, and fuzzy
   keybinding controls.
+- A Karabiner-Elements profile with a Caps Lock Hyper key, application
+  shortcuts, Globe-key mapping, and an F5 microphone toggle.
 - `displayplacer` scripts for the author's side-by-side and vertical monitor
   layouts.
 - A `Brewfile` containing the main dependencies.
@@ -51,6 +53,11 @@ The installer manages:
 | `zsh/.zshrc` | `~/.zshrc` |
 | `zsh/.aliases` | `~/.aliases` |
 | `zsh/.fzcmd_descriptions.zsh` | `~/.fzcmd_descriptions.zsh` |
+| `karabiner/` | `~/.config/karabiner` |
+
+Karabiner's generated automatic backups are ignored. Because its entire config
+directory is linked, changes made in Karabiner-Elements are reflected directly
+in this repository.
 
 ## Local and secret configuration
 
@@ -94,6 +101,14 @@ The leader is `Ctrl-a`.
 | `w` | Select a workspace |
 | `b` | Toggle background opacity |
 | `?` | Open the fuzzy keybinding menu |
+
+## Karabiner mappings
+
+- `Caps Lock` held: Hyper modifier (`Control-Option-Shift-Command`).
+- `Caps Lock` tapped: Caps Lock.
+- `F5`: toggle microphone input mute and play an audio cue.
+- `Left Command-Left Option`: Globe/Fn key.
+- Hyper plus a configured letter: open the corresponding application.
 
 ## Validate
 
