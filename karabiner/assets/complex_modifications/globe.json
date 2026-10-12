@@ -1,0 +1,24 @@
+{
+  "title": "Globe Key Remapping",
+  "rules": [
+    {
+      "description": "Left Cmd + Left Opt to Globe key",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "left_option",
+            "modifiers": {
+              "mandatory": ["left_command"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "fn"
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    }
+  ]
+}

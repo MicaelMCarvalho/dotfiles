@@ -1,0 +1,27 @@
+{
+    "title": "Caps Lock Double Press Detection",
+    "rules": [
+        {
+            "description": "Double Press Right Option to Toggle Caps Lock",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "right_option",
+                        "modifiers": {
+                            "optional": ["any"]
+                        }
+                    },
+                    "to_if_double_tapped": [
+                        {
+                            "key_code": "caps_lock"
+                        }
+                    ],
+                    "parameters": {
+                        "basic.to_if_double_tapped_timeout_milliseconds": 300
+                    }
+                }
+            ]
+        }
+    ]
+}
