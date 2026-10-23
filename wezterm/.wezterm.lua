@@ -98,10 +98,10 @@ local new_tab_action = wezterm.action_callback(spawn_tab_after_current)
 wezterm.on("toggle-opacity", function(window, _pane)
   local overrides = window:get_config_overrides() or {}
 
-  if overrides.window_background_opacity == 0.9 then
+  if overrides.window_background_opacity == 0.95 then
     overrides.window_background_opacity = nil
   else
-    overrides.window_background_opacity = 0.9
+    overrides.window_background_opacity = 0.95
   end
 
   window:set_config_overrides(overrides)

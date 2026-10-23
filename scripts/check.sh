@@ -23,6 +23,9 @@ command -v jq >/dev/null 2>&1 || {
 }
 jq empty karabiner/karabiner.json karabiner/assets/complex_modifications/*.json
 
+printf 'Checking iTerm2 dynamic profile...\n'
+jq empty iterm2/wezterm-like.json
+
 if command -v shellcheck >/dev/null 2>&1; then
   printf 'Running ShellCheck...\n'
   shellcheck install.sh scripts/check.sh scripts/monitors_position_macos/*.sh \

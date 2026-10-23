@@ -33,7 +33,7 @@ fi
 export EDITOR=nvim
 export VISUAL="$EDITOR"
 export PAGER=less
-export LESS='-FRX'
+export LESS='-FRXR'
 export LANG=en_US.UTF-8
 
 # History shared across interactive shells.
@@ -115,6 +115,13 @@ _dotfiles_require() {
       return 127
     fi
   done
+}
+
+# Render Markdown with terminal-aware styling and readable wrapping. Oh My Zsh
+# already defines `md` as an alias for `mkdir -p`, so use a distinct name.
+mdview() {
+  _dotfiles_require glow || return
+  command glow --pager --width "${COLUMNS:-100}" -- "$@"
 }
 
 fzne() {
@@ -288,3 +295,6 @@ if (( ${plugins[(Ie)zsh-syntax-highlighting]} == 0 )) &&
    [[ -r "${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

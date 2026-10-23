@@ -1,0 +1,7 @@
+WRN 2026-10-14T11:12:19.002 ?.46438    server_start:197: Failed to start server: operation not permitted: /var/folders/6k/26cxgxfj33d8qppxvfvv9w280000gn/T/nvim.micael/WyvzOH/nvim.46438.0
+WRN 2026-10-14T11:12:21.464 ?.46460    server_start:197: Failed to start server: operation not permitted: /var/folders/6k/26cxgxfj33d8qppxvfvv9w280000gn/T/nvim.micael/VFXcHO/nvim.46460.0
+WRN 2026-10-14T11:18:38.003 ?.47943    server_start:197: Failed to start server: operation not permitted: /var/folders/6k/26cxgxfj33d8qppxvfvv9w280000gn/T/nvim.micael/le3rta/nvim.47943.0
+WRN 2026-10-14T11:22:41.450 ?.49179    server_start:197: Failed to start server: operation not permitted: /var/folders/6k/26cxgxfj33d8qppxvfvv9w280000gn/T/nvim.micael/4hueUU/nvim.49179.0
+WRN 2026-10-22T10:48:01.664 ?.2572     server_start:197: Failed to start server: operation not permitted: /var/folders/6k/26cxgxfj33d8qppxvfvv9w280000gn/T/nvim.micael/FjIpvX/nvim.2572.0
+WRN 2026-10-22T14:12:30.281 ?.35483    server_start:197: Failed to start server: operation not permitted: /var/folders/6k/26cxgxfj33d8qppxvfvv9w280000gn/T/nvim.micael/GmEWYt/nvim.35483.0
+WRN 2026-10-22T14:31:22.411 ?.42995    server_start:197: Failed to start server: operation not permitted: /var/folders/6k/26cxgxfj33d8qppxvfvv9w280000gn/T/nvim.micael/PwSa6b/nvim.42995.0

@@ -19,6 +19,7 @@ Usage: ./install.sh [--dry-run]
 
 Creates symlinks in your home directory. Existing files are moved to a
 timestamped directory under ~/.dotfiles-backup before being replaced.
+On macOS, it also applies the global settings used by the iTerm2 profile.
 EOF
 }
 
@@ -67,6 +68,22 @@ link_path() {
   info "Linked $destination -> $source"
 }
 
+configure_iterm2() {
+  [[ "$(uname -s)" == "Darwin" ]] || return
+  command -v defaults >/dev/null 2>&1 || return
+
+  run defaults write com.googlecode.iterm2 Leader -string "0x61-0x40000"
+  run defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string \
+    "6C7B3C8E-5A76-4E6B-9E58-2F4B6D2D4A01"
+  run defaults write com.googlecode.iterm2 HideTab -bool false
+  run defaults write com.googlecode.iterm2 HideScrollbar -bool true
+  run defaults write com.googlecode.iterm2 TabStyleWithAutomaticOption -int 5
+  run defaults write com.googlecode.iterm2 DimInactiveSplitPanes -bool true
+  run defaults write com.googlecode.iterm2 DimOnlyText -bool false
+  run defaults write com.googlecode.iterm2 SplitPaneDimmingAmount -float 0.1
+  info "Configured iTerm2 to use the WezTerm-like profile"
+}
+
 main() {
   case "${1:-}" in
     "") ;;
@@ -81,13 +98,18 @@ main() {
   link_path "$DOTFILES_DIR/git/.gitconfig-work" "$HOME/.gitconfig-work"
   link_path "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global"
   link_path "$DOTFILES_DIR/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
+  link_path "$DOTFILES_DIR/iterm2/wezterm-like.json" \
+    "$HOME/Library/Application Support/iTerm2/DynamicProfiles/wezterm-like.json"
   link_path "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
   link_path "$DOTFILES_DIR/zsh/.aliases" "$HOME/.aliases"
   link_path "$DOTFILES_DIR/zsh/.fzcmd_descriptions.zsh" "$HOME/.fzcmd_descriptions.zsh"
   link_path "$DOTFILES_DIR/karabiner" "$HOME/.config/karabiner"
+  configure_iterm2
 
-  info "Installation complete. Open a new shell to load the changes."
-  "$backup_created" && info "Backups are in $BACKUP_DIR"
+  info "Installation complete. Open a new shell and restart iTerm2."
+  if "$backup_created"; then
+    info "Backups are in $BACKUP_DIR"
+  fi
 }
 
 main "$@"

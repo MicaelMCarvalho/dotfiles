@@ -1,0 +1,115 @@
+{
+  "Profiles": [
+    {
+      "Name": "WezTerm-like",
+      "Guid": "6C7B3C8E-5A76-4E6B-9E58-2F4B6D2D4A01",
+      "Custom Directory": "Advanced",
+      "AWDS Tab Option": "Recycle",
+      "AWDS Pane Option": "Recycle",
+      "AWDS Win Option": "No",
+      "Prompt Before Closing 2": 1,
+      "Scrollback Lines": 3000,
+      "Unlimited Scrollback": false,
+      "Transparency": 0.05,
+      "Initial Use Transparency": false,
+      "Background Color": {
+        "Red Component": 0.1568627451,
+        "Green Component": 0.1647058824,
+        "Blue Component": 0.2117647059,
+        "Alpha Component": 1,
+        "Color Space": "sRGB"
+      },
+      "Foreground Color": {
+        "Red Component": 0.9725490196,
+        "Green Component": 0.9725490196,
+        "Blue Component": 0.9490196078,
+        "Alpha Component": 1,
+        "Color Space": "sRGB"
+      },
+      "Bold Color": {
+        "Red Component": 0.9725490196,
+        "Green Component": 0.9725490196,
+        "Blue Component": 0.9490196078,
+        "Alpha Component": 1,
+        "Color Space": "sRGB"
+      },
+      "Cursor Color": {
+        "Red Component": 0.9725490196,
+        "Green Component": 0.9725490196,
+        "Blue Component": 0.9490196078,
+        "Alpha Component": 1,
+        "Color Space": "sRGB"
+      },
+      "Cursor Text Color": {
+        "Red Component": 0.1568627451,
+        "Green Component": 0.1647058824,
+        "Blue Component": 0.2117647059,
+        "Alpha Component": 1,
+        "Color Space": "sRGB"
+      },
+      "Selection Color": {
+        "Red Component": 0.2666666667,
+        "Green Component": 0.2784313725,
+        "Blue Component": 0.3529411765,
+        "Alpha Component": 1,
+        "Color Space": "sRGB"
+      },
+      "Selected Text Color": {
+        "Red Component": 0.9725490196,
+        "Green Component": 0.9725490196,
+        "Blue Component": 0.9490196078,
+        "Alpha Component": 1,
+        "Color Space": "sRGB"
+      },
+      "Ansi 0 Color": { "Red Component": 0.1294117647, "Green Component": 0.1333333333, "Blue Component": 0.1725490196, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 1 Color": { "Red Component": 1, "Green Component": 0.3333333333, "Blue Component": 0.3333333333, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 2 Color": { "Red Component": 0.3137254902, "Green Component": 0.9803921569, "Blue Component": 0.4823529412, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 3 Color": { "Red Component": 0.9450980392, "Green Component": 0.9803921569, "Blue Component": 0.5490196078, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 4 Color": { "Red Component": 0.7411764706, "Green Component": 0.5764705882, "Blue Component": 0.9764705882, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 5 Color": { "Red Component": 1, "Green Component": 0.4745098039, "Blue Component": 0.7764705882, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 6 Color": { "Red Component": 0.5450980392, "Green Component": 0.9137254902, "Blue Component": 0.9921568627, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 7 Color": { "Red Component": 0.9725490196, "Green Component": 0.9725490196, "Blue Component": 0.9490196078, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 8 Color": { "Red Component": 0.3843137255, "Green Component": 0.4470588235, "Blue Component": 0.6431372549, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 9 Color": { "Red Component": 1, "Green Component": 0.3333333333, "Blue Component": 0.3333333333, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 10 Color": { "Red Component": 0.3137254902, "Green Component": 0.9803921569, "Blue Component": 0.4823529412, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 11 Color": { "Red Component": 0.9450980392, "Green Component": 0.9803921569, "Blue Component": 0.5490196078, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 12 Color": { "Red Component": 0.7411764706, "Green Component": 0.5764705882, "Blue Component": 0.9764705882, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 13 Color": { "Red Component": 1, "Green Component": 0.4745098039, "Blue Component": 0.7764705882, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 14 Color": { "Red Component": 0.5450980392, "Green Component": 0.9137254902, "Blue Component": 0.9921568627, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Ansi 15 Color": { "Red Component": 0.9725490196, "Green Component": 0.9725490196, "Blue Component": 0.9490196078, "Alpha Component": 1, "Color Space": "sRGB" },
+      "Keyboard Map": {
+        "0xf702-0x260000": { "Action": 18, "Text": "" },
+        "0xf701-0x260000": { "Action": 21, "Text": "" },
+        "0xf700-0x260000": { "Action": 20, "Text": "" },
+        "0xf703-0x260000": { "Action": 19, "Text": "" },
+        "0xf702-0x280000": { "Action": 10, "Text": "b" },
+        "0xf703-0x280000": { "Action": 10, "Text": "f" },
+        "0xf702-0x300000": { "Action": 11, "Text": "0x1" },
+        "0xf703-0x300000": { "Action": 11, "Text": "0x5" },
+        "0x7f-0x80000": { "Action": 11, "Text": "0x17" },
+        "0x7f-0x100000": { "Action": 11, "Text": "0x15" },
+        "0x73-0x1000000": { "Action": 28, "Text": "6C7B3C8E-5A76-4E6B-9E58-2F4B6D2D4A01" },
+        "0x76-0x1000000": { "Action": 29, "Text": "6C7B3C8E-5A76-4E6B-9E58-2F4B6D2D4A01" },
+        "0x68-0x1000000": { "Action": 18, "Text": "" },
+        "0x6a-0x1000000": { "Action": 21, "Text": "" },
+        "0x6b-0x1000000": { "Action": 20, "Text": "" },
+        "0x6c-0x1000000": { "Action": 19, "Text": "" },
+        "0x71-0x1000000": { "Action": 25, "Text": "Close" },
+        "0x7a-0x1000000": { "Action": 25, "Text": "Maximize Active Pane" },
+        "0x74-0x1000000": { "Action": 27, "Text": "6C7B3C8E-5A76-4E6B-9E58-2F4B6D2D4A01" },
+        "0x5b-0x1000000": { "Action": 2, "Text": "" },
+        "0x5d-0x1000000": { "Action": 0, "Text": "" },
+        "0x6e-0x1000000": { "Action": 25, "Text": "Open Quickly" },
+        "0x77-0x1000000": { "Action": 25, "Text": "Open Quickly" },
+        "0x62-0x1000000": { "Action": 25, "Text": "Use Transparency" },
+        "0x2c-0x1000000": { "Action": 33, "Text": "" },
+        "0x2e-0x1000000": { "Action": 34, "Text": "" },
+        "0x68-0x1020000": { "Action": 51, "Text": "" },
+        "0x6a-0x1020000": { "Action": 50, "Text": "" },
+        "0x6b-0x1020000": { "Action": 49, "Text": "" },
+        "0x6c-0x1020000": { "Action": 52, "Text": "" },
+        "0x2f-0x1020000": { "Action": 25, "Text": "Open Quickly" }
+      }
+    }
+  ]
+}

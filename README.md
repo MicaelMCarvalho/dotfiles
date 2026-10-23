@@ -1,6 +1,6 @@
 # macOS dotfiles
 
-Personal configuration for Zsh, Git, WezTerm, and Karabiner-Elements, plus
+Personal configuration for Zsh, Git, WezTerm, iTerm2, and Karabiner-Elements, plus
 scripts for restoring monitor layouts.
 
 ## What is included
@@ -11,6 +11,7 @@ scripts for restoring monitor layouts.
   rerere, and a separate identity for repositories under `~/cleanslate/`.
 - A WezTerm configuration with pane, tab, workspace, resize, and fuzzy
   keybinding controls.
+- An iTerm2 dynamic profile with matching colors, navigation, and leader keys.
 - A Karabiner-Elements profile with a Caps Lock Hyper key, application
   shortcuts, Globe-key mapping, and an F5 microphone toggle.
 - `displayplacer` scripts for the author's side-by-side and vertical monitor
@@ -50,6 +51,7 @@ The installer manages:
 | `git/.gitconfig-work` | `~/.gitconfig-work` |
 | `git/.gitignore_global` | `~/.gitignore_global` |
 | `wezterm/.wezterm.lua` | `~/.wezterm.lua` |
+| `iterm2/wezterm-like.json` | `~/Library/Application Support/iTerm2/DynamicProfiles/wezterm-like.json` |
 | `zsh/.zshrc` | `~/.zshrc` |
 | `zsh/.aliases` | `~/.aliases` |
 | `zsh/.fzcmd_descriptions.zsh` | `~/.fzcmd_descriptions.zsh` |
@@ -85,6 +87,7 @@ export VOST_ROOT="$HOME/src/vost"
 | `fzconf` | Select a file below `~/.config` |
 | `fzh` | Search shell history |
 | `fzcmd` | Browse available commands and descriptions |
+| `mdview FILE` | Render a Markdown file in the terminal with Glow |
 
 ## WezTerm leader keys
 
@@ -102,6 +105,15 @@ The leader is `Ctrl-a`.
 | `b` | Toggle background opacity |
 | `?` | Open the fuzzy keybinding menu |
 
+## iTerm2 leader keys
+
+The installer makes the `WezTerm-like` dynamic profile the iTerm2 default and
+sets the same `Ctrl-a` leader. Its pane, tab, navigation, Dracula color, opacity,
+scrollback, and close-confirmation settings track the WezTerm configuration.
+`Control-Shift-Arrow` moves focus between panes without using the leader.
+See [`iterm2/README.md`](iterm2/README.md) for the mappings and the few native
+iTerm2 substitutions.
+
 ## Karabiner mappings
 
 - `Caps Lock` held: Hyper modifier (`Control-Option-Shift-Command`).
@@ -116,5 +128,5 @@ The leader is `Ctrl-a`.
 ./scripts/check.sh
 ```
 
-The checker always performs Bash and Zsh syntax checks. It also runs ShellCheck
-and WezTerm validation when those programs are installed.
+The checker always performs Bash, Zsh, JSON, and iTerm2 profile checks. It also
+runs ShellCheck and WezTerm validation when those programs are installed.
