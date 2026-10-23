@@ -1,0 +1,14 @@
+-- return {
+--   "Kicamon/markdown-table-mode.nvim",
+--   ft = { "markdown" }, -- load only for markdown
+--   opts = {
+--     filetypes = { "markdown" }, -- extra safety
+--     align = true,               -- auto align when editing
+--     border = true,              -- keep neat borders
+--     format_on_type = true,      -- format table when you type `|`
+--     format_on_save = true,      -- auto format on save
+--   },
+--   keys = {
+--     { "<leader>tm", "<cmd>TableModeToggle<cr>", desc = "Toggle Markdown Table Mode" },
+--   },
+-- }
