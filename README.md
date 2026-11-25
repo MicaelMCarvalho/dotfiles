@@ -1,7 +1,7 @@
 # macOS dotfiles
 
-Personal configuration for Zsh, Git, WezTerm, iTerm2, and Karabiner-Elements, plus
-scripts for restoring monitor layouts.
+Personal macOS setup for Zsh and Powerlevel10k, WezTerm and iTerm2, Git and
+GitHub CLI, Neovim, VS Code, and Karabiner-Elements.
 
 ## What is included
 
@@ -16,16 +16,18 @@ scripts for restoring monitor layouts.
   shortcuts, Globe-key mapping, and an F5 microphone toggle.
 - `displayplacer` scripts for the author's side-by-side and vertical monitor
   layouts.
-- A `Brewfile` containing the main dependencies.
-- An optional `Brewfile.apps` for desktop apps and Karabiner shortcuts.
+- A [Brewfile](Brewfile) for the shell, terminals, and CLI tools, including
+  `codex`, `claude` (Claude Code), and `gcloud`.
+- An optional [desktop bundle](Brewfile.apps) with Raycast, Magnet, Proton VPN,
+  Docker Desktop, and apps launched by Karabiner shortcuts. The Claude desktop
+  app is in this bundle.
 
 ## Install
 
-These files target macOS. Review them before installing because the Git identity
-and monitor IDs are personal.
-
-Install [Homebrew](https://brew.sh/) first. `install.sh` installs Oh My Zsh,
-Powerlevel10k, fzf-tab, and NVM if they are missing.
+Install [Homebrew](https://brew.sh/) and clone the repo to a location you plan
+to keep. The installer creates symlinks to that checkout. Review the identities
+in [`.gitconfig`](git/.gitconfig) and [`.gitconfig-work`](git/.gitconfig-work)
+before linking them. The work identity applies under `~/cleanslate/`.
 
 ```sh
 git clone git@github.com:MicaelMCarvalho/dotfiles.git ~/git/dotfiles
@@ -39,38 +41,52 @@ brew bundle
 ./install.sh
 ```
 
-For the optional desktop apps, sign in to the Mac App Store with the Apple
-Account that owns Magnet, then run `brew bundle --file=Brewfile.apps`.
-The Obsidian shortcut expects a vault named `Diary`. Set up Tasks separately at
-`~/Applications/Tasks.app` and install Slack if you use its shortcut.
+### Optional desktop apps
 
-Open a new shell after installing. Run `nvm install --lts` if you need a default
-Node.js version, or run `nvm install` from a project with an `.nvmrc`.
-Zsh loads fzf integration from the Homebrew binary on a fresh setup and uses the
-bundled shell integration when running inside iTerm2.
+Sign in to the Mac App Store with the Apple Account that owns Magnet, then run:
 
-Existing destination files are never deleted. The installer moves conflicts to
-a timestamped directory under `~/.dotfiles-backup/`, and it leaves correct
-links untouched when run again.
+```sh
+brew bundle --file=Brewfile.apps
+```
 
-The installer manages:
+The bundle installs apps. Use the apps' own sign-in, import, and permission
+prompts to restore accounts and settings. The Obsidian shortcut expects a vault
+named `Diary`. Set up `~/Applications/Tasks.app` and Slack separately if you use
+their shortcuts.
 
-| Repository file | Destination |
-| --- | --- |
-| `git/.gitconfig` | `~/.gitconfig` |
-| `git/.gitconfig-work` | `~/.gitconfig-work` |
-| `git/.gitignore_global` | `~/.gitignore_global` |
-| `wezterm/.wezterm.lua` | `~/.wezterm.lua` |
-| `iterm2/wezterm-like.json` | `~/Library/Application Support/iTerm2/DynamicProfiles/wezterm-like.json` |
-| `zsh/.zprofile` | `~/.zprofile` |
-| `zsh/.zshrc` | `~/.zshrc` |
-| `zsh/.p10k.zsh` | `~/.p10k.zsh` |
-| `zsh/.aliases` | `~/.aliases` |
-| `zsh/.fzcmd_descriptions.zsh` | `~/.fzcmd_descriptions.zsh` |
-| `nvim/` | `~/.config/nvim` |
-| `karabiner/` | `~/.config/karabiner` |
-| `gh/config.yml` | `~/.config/gh/config.yml` (or the configured GitHub CLI directory) |
-| `vscode/settings.json` | `~/Library/Application Support/Code/User/settings.json` |
+### First launch
+
+- Open a new shell and restart iTerm2. The installer fetches Oh My Zsh,
+  Powerlevel10k, `fzf-tab`, and NVM when missing. The linked `.p10k.zsh` restores
+  the prompt layout without running `p10k configure`.
+- Run `nvm install --lts` for a default Node.js version, or run `nvm install`
+  from a project with an `.nvmrc`.
+- Run `gh auth login` if you use GitHub CLI. Start `codex` and `claude` to set up
+  each CLI account.
+- Open Karabiner-Elements and grant the macOS permissions it requests, then
+  test the Hyper key and window cycling.
+
+## Managed files and backups
+
+The installer moves conflicting files to a timestamped directory under
+`~/.dotfiles-backup/`. Set `DOTFILES_BACKUP_DIR` to choose a different backup
+root. A repeat run keeps correct symlinks in place and reapplies the iTerm2
+preferences. To restore a backed-up file, remove its symlink and move the
+corresponding file from the backup directory to its original location. The
+backup covers replaced files. iTerm2 preferences written via `defaults` are
+stored by macOS separately.
+
+The installer manages these paths:
+
+- Files in [`git/`](git/) and [`zsh/`](zsh/) are linked by name in `~`.
+- [`wezterm/.wezterm.lua`](wezterm/.wezterm.lua) goes to `~/.wezterm.lua`.
+- [`iterm2/wezterm-like.json`](iterm2/wezterm-like.json) goes into
+  `~/Library/Application Support/iTerm2/DynamicProfiles/`.
+- [`nvim/`](nvim/) and [`karabiner/`](karabiner/) go into `~/.config/`.
+- [`gh/config.yml`](gh/config.yml) goes to `~/.config/gh/config.yml` by
+  default. The installer honors `GH_CONFIG_DIR` and `XDG_CONFIG_HOME`.
+- [`vscode/settings.json`](vscode/settings.json) goes into
+  `~/Library/Application Support/Code/User/`.
 
 Karabiner's generated automatic backups are ignored. Because its entire config
 directory is linked, changes made in Karabiner-Elements are reflected directly
@@ -78,13 +94,12 @@ in this repository.
 
 ## Local and secret configuration
 
-Sign in with `gh auth login` on a new machine. GitHub CLI authentication and
-SSH private keys are stored separately from these dotfiles. Configure a custom
-Flutter SDK path in VS Code workspace settings if your project needs one.
+Keep GitHub CLI authentication and SSH private keys outside the checkout. Set
+a custom Flutter SDK path in VS Code workspace settings if your project needs one.
 
 Put machine-only settings, secrets, or experimental configuration in
-`~/.zshrc.local`. It is sourced last and is deliberately not managed by this
-repository.
+`~/.zshrc.local`. Zsh loads it near the end of startup, before the standalone
+syntax-highlighting fallback.
 
 The `voluntinder-mock` helper reads its secret from macOS Keychain. Override
 the default `~/git/vost` project location with `VOST_ROOT`:
@@ -102,46 +117,55 @@ export VOST_ROOT="$HOME/src/vost"
 | `fzcd` | Find and enter a directory |
 | `ffcd` | Find a file and enter its directory |
 | `fzrg PATTERN` | Search file contents and open the selected match |
-| `fzgit` | Select a tracked Git file |
-| `fzconf` | Select a file below `~/.config` |
-| `fzh` | Search shell history |
-| `fzcmd` | Browse available commands and descriptions |
+| `fzgit` | Open a tracked Git file in Neovim |
+| `fzconf` | Open a file below `~/.config` in Neovim |
+| `fzh` | Search shell history and insert a command for editing |
+| `fzcmd` | Browse available commands and insert one at the prompt |
 | `mdview FILE` | Render a Markdown file in the terminal with Glow |
 
 ## WezTerm leader keys
 
-The leader is `Ctrl-a`.
+Press `Ctrl-a`, then the key below.
 
 | Key | Action |
 | --- | --- |
-| `s` / `v` | Split vertically / horizontally |
-| `h j k l` | Move between panes |
-| `r` | Enter pane resize mode |
+| `s` / `v` | Split into top and bottom / left and right panes |
+| `h j k l` | Focus the pane to the left, below, above, or right |
+| `q` / `z` | Close with confirmation / toggle pane zoom |
+| `r` | Resize with `h j k l`, then press `Enter` or `Esc` to exit |
 | `t` | Create a tab after the current tab |
 | `[` / `]` | Select previous / next tab |
-| `m` | Enter tab move mode |
+| `n` / `1`–`9` | Open the tab navigator / select a tab by number |
+| `m` | Move tabs with `h` or `l`, then press `Enter` or `Esc` to exit |
 | `w` | Select a workspace |
 | `b` | Toggle background opacity |
 | `?` | Open the fuzzy keybinding menu |
 
 ## iTerm2 leader keys
 
-The installer makes the `WezTerm-like` dynamic profile the iTerm2 default and
-sets the same `Ctrl-a` leader. Its pane, tab, navigation, Dracula color, opacity,
-scrollback, and close-confirmation settings track the WezTerm configuration.
-`Control-Shift-Arrow` moves focus between panes without using the leader.
-See [`iterm2/README.md`](iterm2/README.md) for the mappings and the few native
-iTerm2 substitutions.
+The installer makes `WezTerm-like` the default iTerm2 profile. It shares the
+`Ctrl-a` leader and common pane and tab shortcuts with WezTerm. The
+[iTerm2 guide](iterm2/README.md) lists the full mappings and how to check the
+profile after installation.
 
 ## Karabiner mappings
 
 - `Caps Lock` held: Hyper modifier (`Control-Option-Shift-Command`).
 - `Caps Lock` tapped: Caps Lock.
+- Double-tap `Right Option`: toggle Caps Lock.
 - `F5`: toggle microphone input mute and play an audio cue.
 - `Left Command-Left Option`: Globe/Fn key.
 - `Option-Tab` / `Shift-Option-Tab`: cycle forward/backward through windows of
   the current application.
 - Hyper plus a configured letter: open the corresponding application.
+
+## Monitor layouts
+
+The [side-by-side](scripts/monitors_position_macos/displays-side-by-side.sh) and
+[vertical](scripts/monitors_position_macos/displays-vertical.sh) presets use
+display IDs and coordinates specific to the author's setup. On a different
+Mac, run `displayplacer list` and update the preset for your displays before
+running it.
 
 ## Validate
 
@@ -149,5 +173,7 @@ iTerm2 substitutions.
 ./scripts/check.sh
 ```
 
-The checker always performs Bash, Zsh, JSON, and iTerm2 profile checks. It also
-runs ShellCheck and WezTerm validation when those programs are installed.
+The checker validates shell syntax, Karabiner and iTerm2 JSON, VS Code settings,
+and unstaged diff whitespace. It also runs ShellCheck and WezTerm validation
+when those programs are installed. Use `./install.sh --dry-run` to preview
+dependency downloads, symlinks, backups, and iTerm2 preference writes.
