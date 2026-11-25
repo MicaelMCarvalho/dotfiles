@@ -60,7 +60,7 @@ return {
     },
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = {},
+        ensure_installed = { "kotlin_lsp" },
         -- Servers below are enabled explicitly. Mason's default automatic
         -- enabling can otherwise attach another client with a different root.
         automatic_enable = false,
@@ -158,6 +158,11 @@ return {
         },
       }))
 
+      vim.lsp.config("kotlin_lsp", vim.tbl_deep_extend("force", common, {
+        -- The official Kotlin LSP relies on a Gradle or Maven project model.
+        single_file_support = false,
+      }))
+
       for _, server in ipairs({ "ts_ls", "volar", "dartls", "marksman" }) do
         vim.lsp.config(server, common)
       end
@@ -177,6 +182,7 @@ return {
 
       vim.lsp.enable({
         "lua_ls",
+        "kotlin_lsp",
         "ts_ls",
         "volar",
         "dartls",

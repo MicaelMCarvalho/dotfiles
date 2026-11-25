@@ -28,6 +28,8 @@ brew "imagemagick"
 brew "ruff"
 brew "wget"
 
+cask "claude-code"
+cask "codex"
 cask "font-meslo-lg-nerd-font"
 cask "gcloud-cli"
 cask "iterm2"

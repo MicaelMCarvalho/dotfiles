@@ -139,6 +139,8 @@ iTerm2 substitutions.
 - `Caps Lock` tapped: Caps Lock.
 - `F5`: toggle microphone input mute and play an audio cue.
 - `Left Command-Left Option`: Globe/Fn key.
+- `Option-Tab` / `Shift-Option-Tab`: cycle forward/backward through windows of
+  the current application.
 - Hyper plus a configured letter: open the corresponding application.
 
 ## Validate

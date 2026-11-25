@@ -2,6 +2,21 @@ return {
   "yousefhadder/markdown-plus.nvim",
   ft = "markdown",
 
+  init = function()
+    vim.api.nvim_create_autocmd("FileType", {
+      group = vim.api.nvim_create_augroup("MarkdownEnter", { clear = true }),
+      pattern = "markdown",
+      callback = function(event)
+        -- Avoid markdown-plus's fallback to autoclose's expression mapping,
+        -- which can swallow Enter outside lists. Keep a native newline here.
+        vim.keymap.set("i", "<CR>", "<CR>", {
+          buffer = event.buf,
+          desc = "Insert newline",
+        })
+      end,
+    })
+  end,
+
   opts = {
     enabled = true,
 
