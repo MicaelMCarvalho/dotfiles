@@ -1,5 +1,7 @@
 # Desktop apps for a full macOS setup.
+tap "chang-07/tap"
 brew "mas"
+cask "chang-07/tap/rascal"
 cask "dbeaver-community"
 cask "docker-desktop"
 cask "protonvpn"

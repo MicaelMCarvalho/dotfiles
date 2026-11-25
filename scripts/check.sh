@@ -8,6 +8,7 @@ cd "$REPOSITORY_DIR"
 printf 'Checking Bash syntax...\n'
 bash -n install.sh scripts/check.sh scripts/monitors_position_macos/*.sh \
   karabiner/scripts/*.sh
+bash -n rascal/configure.sh
 
 printf 'Checking Zsh syntax...\n'
 command -v zsh >/dev/null 2>&1 || {
@@ -34,7 +35,7 @@ jq empty vscode/settings.json
 if command -v shellcheck >/dev/null 2>&1; then
   printf 'Running ShellCheck...\n'
   shellcheck install.sh scripts/check.sh scripts/monitors_position_macos/*.sh \
-    karabiner/scripts/*.sh
+    karabiner/scripts/*.sh rascal/configure.sh
 else
   printf 'Skipping ShellCheck (not installed).\n'
 fi

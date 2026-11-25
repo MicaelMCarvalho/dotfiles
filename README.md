@@ -19,8 +19,8 @@ GitHub CLI, Neovim, VS Code, and Karabiner-Elements.
 - A [Brewfile](Brewfile) for the shell, terminals, and CLI tools, including
   `codex`, `claude` (Claude Code), and `gcloud`.
 - An optional [desktop bundle](Brewfile.apps) with Raycast, Magnet, Proton VPN,
-  Docker Desktop, and apps launched by Karabiner shortcuts. The Claude desktop
-  app is in this bundle.
+  Docker Desktop, Rascal, and other apps launched by Karabiner shortcuts.
+  The Claude desktop app is in this bundle.
 
 ## Install
 
@@ -43,9 +43,12 @@ brew bundle
 
 ### Optional desktop apps
 
-Sign in to the Mac App Store with the Apple Account that owns Magnet, then run:
+Sign in to the Mac App Store with the Apple Account that owns Magnet. On
+Homebrew versions that require cask trust, trust Rascal's upstream cask before
+running the bundle:
 
 ```sh
+brew trust --cask chang-07/tap/rascal
 brew bundle --file=Brewfile.apps
 ```
 
@@ -158,6 +161,16 @@ profile after installation.
 - `Option-Tab` / `Shift-Option-Tab`: cycle forward/backward through windows of
   the current application.
 - Hyper plus a configured letter: open the corresponding application.
+- `Hyper-E` opens Finder. `Hyper-X` opens [Rascal][rascal].
+
+Rascal runs alongside Finder. The installer sets Dracula, compact rows, and Vim
+navigation in Rascal when those preferences are missing. To apply only those
+preferences, quit Rascal and run `bash rascal/configure.sh`. In Rascal, use
+`Command-Shift-P` for the command palette and `Command-Backslash` for a second
+pane. See [Rascal's keymap][rascal-keymap] for the full list.
+
+[rascal]: https://github.com/chang-07/rascal
+[rascal-keymap]: https://github.com/chang-07/rascal/blob/main/HOTKEYS.md
 
 ## Monitor layouts
 

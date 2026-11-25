@@ -143,6 +143,9 @@ main() {
   link_path "$DOTFILES_DIR/vscode/settings.json" \
     "$HOME/Library/Application Support/Code/User/settings.json"
   configure_iterm2
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    run bash "$DOTFILES_DIR/rascal/configure.sh"
+  fi
 
   info "Installation complete. Open a new shell and restart iTerm2."
   if "$backup_created"; then
