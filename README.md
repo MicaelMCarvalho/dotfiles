@@ -17,27 +17,37 @@ scripts for restoring monitor layouts.
 - `displayplacer` scripts for the author's side-by-side and vertical monitor
   layouts.
 - A `Brewfile` containing the main dependencies.
+- An optional `Brewfile.apps` for desktop apps and Karabiner shortcuts.
 
 ## Install
 
 These files target macOS. Review them before installing because the Git identity
 and monitor IDs are personal.
 
-Install [Homebrew](https://brew.sh/) and
-[Oh My Zsh](https://ohmyz.sh/) first. Powerlevel10k is optional; when it is not
-installed, Zsh still loads normally without the custom prompt.
+Install [Homebrew](https://brew.sh/) first. `install.sh` installs Oh My Zsh,
+Powerlevel10k, fzf-tab, and NVM if they are missing.
 
 ```sh
 git clone git@github.com:MicaelMCarvalho/dotfiles.git ~/git/dotfiles
 cd ~/git/dotfiles
 
-# Preview every link operation.
+# Preview dependency installs and link operations.
 ./install.sh --dry-run
 
 # Install dependencies and create the links.
 brew bundle
 ./install.sh
 ```
+
+For the optional desktop apps, sign in to the Mac App Store with the Apple
+Account that owns Magnet, then run `brew bundle --file=Brewfile.apps`.
+The Obsidian shortcut expects a vault named `Diary`. Set up Tasks separately at
+`~/Applications/Tasks.app` and install Slack if you use its shortcut.
+
+Open a new shell after installing. Run `nvm install --lts` if you need a default
+Node.js version, or run `nvm install` from a project with an `.nvmrc`.
+Zsh loads fzf integration from the Homebrew binary on a fresh setup and uses the
+bundled shell integration when running inside iTerm2.
 
 Existing destination files are never deleted. The installer moves conflicts to
 a timestamped directory under `~/.dotfiles-backup/`, and it leaves correct
@@ -52,16 +62,25 @@ The installer manages:
 | `git/.gitignore_global` | `~/.gitignore_global` |
 | `wezterm/.wezterm.lua` | `~/.wezterm.lua` |
 | `iterm2/wezterm-like.json` | `~/Library/Application Support/iTerm2/DynamicProfiles/wezterm-like.json` |
+| `zsh/.zprofile` | `~/.zprofile` |
 | `zsh/.zshrc` | `~/.zshrc` |
+| `zsh/.p10k.zsh` | `~/.p10k.zsh` |
 | `zsh/.aliases` | `~/.aliases` |
 | `zsh/.fzcmd_descriptions.zsh` | `~/.fzcmd_descriptions.zsh` |
+| `nvim/` | `~/.config/nvim` |
 | `karabiner/` | `~/.config/karabiner` |
+| `gh/config.yml` | `~/.config/gh/config.yml` (or the configured GitHub CLI directory) |
+| `vscode/settings.json` | `~/Library/Application Support/Code/User/settings.json` |
 
 Karabiner's generated automatic backups are ignored. Because its entire config
 directory is linked, changes made in Karabiner-Elements are reflected directly
 in this repository.
 
 ## Local and secret configuration
+
+Sign in with `gh auth login` on a new machine. GitHub CLI authentication and
+SSH private keys are stored separately from these dotfiles. Configure a custom
+Flutter SDK path in VS Code workspace settings if your project needs one.
 
 Put machine-only settings, secrets, or experimental configuration in
 `~/.zshrc.local`. It is sourced last and is deliberately not managed by this

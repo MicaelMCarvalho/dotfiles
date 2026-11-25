@@ -1,0 +1,24 @@
+# Desktop apps for a full macOS setup.
+brew "mas"
+cask "dbeaver-community"
+cask "docker-desktop"
+cask "protonvpn"
+cask "raycast"
+cask "utm"
+cask "vlc"
+mas "Magnet", id: 441258766
+
+# Installed apps launched by Karabiner shortcuts.
+cask "bitwarden"
+cask "brave-browser"
+cask "chatgpt"
+cask "chatgpt-classic"
+cask "claude"
+cask "discord"
+cask "firefox"
+cask "fsnotes"
+cask "obsidian"
+cask "opera"
+cask "qobuz"
+cask "thunderbird"
+cask "visual-studio-code"

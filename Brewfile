@@ -19,6 +19,17 @@ brew "tree"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
+# Development and media tools.
+brew "awscli"
+brew "exiftool"
+brew "ffmpeg"
+brew "gh"
+brew "imagemagick"
+brew "ruff"
+brew "wget"
+
 cask "font-meslo-lg-nerd-font"
+cask "gcloud-cli"
+cask "iterm2"
 cask "karabiner-elements"
 cask "wezterm"

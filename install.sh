@@ -17,7 +17,8 @@ usage() {
   cat <<'EOF'
 Usage: ./install.sh [--dry-run]
 
-Creates symlinks in your home directory. Existing files are moved to a
+Installs shell dependencies and creates symlinks in your home directory.
+Existing files are moved to a
 timestamped directory under ~/.dotfiles-backup before being replaced.
 On macOS, it also applies the global settings used by the iTerm2 profile.
 EOF
@@ -68,6 +69,35 @@ link_path() {
   info "Linked $destination -> $source"
 }
 
+install_shell_dependency() {
+  local repository="$1"
+  local destination="$2"
+  local entrypoint="$3"
+  shift 3
+
+  if [[ -r "$destination/$entrypoint" ]]; then
+    info "Already installed: $destination"
+    return
+  fi
+
+  run mkdir -p -- "$(dirname -- "$destination")"
+  run git clone --depth 1 "$@" -- "$repository" "$destination"
+}
+
+install_shell_dependencies() {
+  local omz="$HOME/.oh-my-zsh"
+  local custom="${ZSH_CUSTOM:-$omz/custom}"
+
+  install_shell_dependency https://github.com/ohmyzsh/ohmyzsh.git \
+    "$omz" oh-my-zsh.sh
+  install_shell_dependency https://github.com/romkatv/powerlevel10k.git \
+    "$custom/themes/powerlevel10k" powerlevel10k.zsh-theme
+  install_shell_dependency https://github.com/Aloxaf/fzf-tab.git \
+    "$custom/plugins/fzf-tab" fzf-tab.plugin.zsh
+  install_shell_dependency https://github.com/nvm-sh/nvm.git \
+    "${NVM_DIR:-$HOME/.nvm}" nvm.sh --branch v0.41.0
+}
+
 configure_iterm2() {
   [[ "$(uname -s)" == "Darwin" ]] || return
   command -v defaults >/dev/null 2>&1 || return
@@ -93,6 +123,7 @@ main() {
   esac
 
   info "Installing dotfiles from $DOTFILES_DIR"
+  install_shell_dependencies
 
   link_path "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
   link_path "$DOTFILES_DIR/git/.gitconfig-work" "$HOME/.gitconfig-work"
@@ -100,10 +131,17 @@ main() {
   link_path "$DOTFILES_DIR/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
   link_path "$DOTFILES_DIR/iterm2/wezterm-like.json" \
     "$HOME/Library/Application Support/iTerm2/DynamicProfiles/wezterm-like.json"
+  link_path "$DOTFILES_DIR/zsh/.zprofile" "$HOME/.zprofile"
   link_path "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
+  link_path "$DOTFILES_DIR/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
   link_path "$DOTFILES_DIR/zsh/.aliases" "$HOME/.aliases"
   link_path "$DOTFILES_DIR/zsh/.fzcmd_descriptions.zsh" "$HOME/.fzcmd_descriptions.zsh"
+  link_path "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
   link_path "$DOTFILES_DIR/karabiner" "$HOME/.config/karabiner"
+  link_path "$DOTFILES_DIR/gh/config.yml" \
+    "${GH_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/gh}/config.yml"
+  link_path "$DOTFILES_DIR/vscode/settings.json" \
+    "$HOME/Library/Application Support/Code/User/settings.json"
   configure_iterm2
 
   info "Installation complete. Open a new shell and restart iTerm2."

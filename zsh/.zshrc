@@ -71,6 +71,7 @@ dotfiles_desired_plugins=(
   s3cmd
   virtualenv
   flutter
+  fzf-tab
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
@@ -83,6 +84,13 @@ for dotfiles_plugin in $dotfiles_desired_plugins; do
   fi
 done
 unset dotfiles_desired_plugins dotfiles_plugin
+
+# Let fzf-tab display an interactive picker instead of zsh's full menu.
+zstyle ':completion:*' menu no
+zstyle ':completion:*:descriptions' format '[%d]'
+# List file completions newest first and preserve that order in the picker.
+zstyle ':completion:*' file-sort modification
+zstyle ':fzf-tab:*' fzf-flags --no-sort
 
 if [[ -r "$ZSH/oh-my-zsh.sh" ]]; then
   source "$ZSH/oh-my-zsh.sh"
@@ -105,7 +113,14 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS='--height=50% --layout=reverse --border --preview "if [[ -f {} ]]; then (bat --style=numbers --color=always -- {} 2>/dev/null || cat -- {}); elif [[ -d {} ]]; then tree -C -- {} 2>/dev/null | head -200; fi"'
 
-[[ -r "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
+if [[ -r "$HOME/.fzf.zsh" ]]; then
+  source "$HOME/.fzf.zsh"
+elif (( $+commands[fzf] )) && dotfiles_fzf_init="$(fzf --zsh 2>/dev/null)"; then
+  eval "$dotfiles_fzf_init"
+fi
+unset dotfiles_fzf_init
+# fzf integration can replace Tab's binding; restore fzf-tab afterward.
+(( $+functions[enable-fzf-tab] )) && enable-fzf-tab
 
 _dotfiles_require() {
   local command_name
@@ -261,8 +276,12 @@ if [[ -s "$NVM_DIR/nvm.sh" ]]; then
   npx()  { _load_nvm && npx "$@"; }
 fi
 
-[[ -r "$HOME/.iterm2_shell_integration.zsh" ]] &&
+if [[ -r "$HOME/.iterm2_shell_integration.zsh" ]]; then
   source "$HOME/.iterm2_shell_integration.zsh"
+elif [[ "$TERM_PROGRAM" == iTerm.app &&
+        -r /Applications/iTerm.app/Contents/Resources/iterm2_shell_integration.zsh ]]; then
+  source /Applications/iTerm.app/Contents/Resources/iterm2_shell_integration.zsh
+fi
 [[ -r "$HOME/.dart-cli-completion/zsh-config.zsh" ]] &&
   source "$HOME/.dart-cli-completion/zsh-config.zsh"
 
@@ -295,6 +314,3 @@ if (( ${plugins[(Ie)zsh-syntax-highlighting]} == 0 )) &&
    [[ -r "${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

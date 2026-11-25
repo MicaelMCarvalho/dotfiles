@@ -14,7 +14,9 @@ command -v zsh >/dev/null 2>&1 || {
   printf 'zsh is required.\n' >&2
   exit 127
 }
-zsh -n zsh/.zshrc zsh/.aliases zsh/.fzcmd_descriptions.zsh
+for config in zsh/.zprofile zsh/.zshrc zsh/.p10k.zsh zsh/.aliases zsh/.fzcmd_descriptions.zsh; do
+  zsh -n "$config"
+done
 
 printf 'Checking Karabiner JSON...\n'
 command -v jq >/dev/null 2>&1 || {
@@ -25,6 +27,9 @@ jq empty karabiner/karabiner.json karabiner/assets/complex_modifications/*.json
 
 printf 'Checking iTerm2 dynamic profile...\n'
 jq empty iterm2/wezterm-like.json
+
+printf 'Checking VS Code settings...\n'
+jq empty vscode/settings.json
 
 if command -v shellcheck >/dev/null 2>&1; then
   printf 'Running ShellCheck...\n'
